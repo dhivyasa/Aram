@@ -1,19 +1,12 @@
 import "./App.css";
-import { useState } from "react";
+import "./css/styles.css";
+import LangPage from "./components/PairsPage";
 
 export default function Story() {
-  return (
-    <>
-      <div className="square">
-        <Sentence/>
-        <Sentence/>
-      </div>
-    </>
-  );
+  return <LangPage />;
 }
-const Originalvalue="En Peru Arya"
 
-function Sentence() {
+/*function Sentence() {
   const [value, setValue] = useState(Originalvalue);
   function handleClick() {
     setValue("My name is Arya");
@@ -24,4 +17,4 @@ function Sentence() {
       {value}
     </button>
   );
-}
+}*/
