@@ -8,14 +8,14 @@ export default function Game({ pairs, langA, langB }) {
   const [langAVoice, setLangAVoice] = React.useState(null);
   const [langBVoice, setLangBVoice] = React.useState(null);
   const [current, setCurrent] = React.useState(null);
-  const [choices, setChoices] = React.useState([]);
+  const [langAchoices, setlangAChoices] = React.useState([]);
+  const [langBchoices, setlangBChoices] = React.useState([]);
   const [selected, setSelected] = React.useState({});
 
   /*
-  0. remove accents
-  1. convert to tamil
-  2. Can I display the word in tamil
-  3. Accent in tamil
+  0. Add table
+  1. Split the table into two columns
+  2. Accent in tamil
 
   */
 
@@ -42,12 +42,17 @@ export default function Game({ pairs, langA, langB }) {
   }, []);
 
   React.useEffect(() => {
-    const all = pairs.flatMap(([valueA, valueB]) => [
-      { lang: langA.code, value: valueA },
-      { lang: langB.code, value: valueB },
-    ]);
-    const sorted = all.sort(() => Math.random() - 0.5);
-    setChoices(sorted);
+    const langAchoices = [];
+    const langBchoices = [];
+    pairs.forEach((element) => {
+      langAchoices.push({ lang: langA.code, value: element[0] });
+      langBchoices.push({ lang: langB.code, value: element[1] });
+    });
+
+    const langAsorted = langAchoices.sort(() => Math.random() - 0.5);
+    const langBsorted = langBchoices.sort(() => Math.random() - 0.9);
+    setlangAChoices(langAsorted);
+    setlangBChoices(langBsorted);
   }, [pairs]);
 
   const isMatch = (valueA, valueB) =>
@@ -153,24 +158,50 @@ export default function Game({ pairs, langA, langB }) {
       </div>
 
       <h2>Choose the pairs</h2>
-
-      <ul className="choices">
-        {choices.map((choice) => (
-          <li key={`${choice.lang}-${choice.value}`}>
-            <button
-              onClick={() => {
-                choose(choice);
-              }}
-              className={
-                current && current.value === choice.value ? "selected" : ""
-              }
-              disabled={!!selected[choice.value]}
-            >
-              {choice.value}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>{langA.name}</th>
+            <th>{langB.name}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td key="langA">
+              {langAchoices.map((choice) => (
+                <button
+                  key={`${choice.lang}-${choice.value}`}
+                  onClick={() => {
+                    choose(choice);
+                  }}
+                  className={
+                    current && current.value === choice.value ? "selected" : ""
+                  }
+                  disabled={!!selected[choice.value]}
+                >
+                  {choice.value}{" "}
+                </button>
+              ))}
+            </td>
+            <td key="langB">
+              {langBchoices.map((choice) => (
+                <button
+                  key={`${choice.lang}-${choice.value}`}
+                  onClick={() => {
+                    choose(choice);
+                  }}
+                  className={
+                    current && current.value === choice.value ? "selected" : ""
+                  }
+                  disabled={!!selected[choice.value]}
+                >
+                  {choice.value}
+                </button>
+              ))}
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
       <button className="reset" onClick={() => reset()}>
         reset
