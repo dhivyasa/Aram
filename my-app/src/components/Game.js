@@ -202,9 +202,9 @@ export default function Game({ pairs, langA, langB }) {
           </tr>
         </tbody>
       </table>
-
+      <br></br>
       <button className="reset" onClick={() => reset()}>
-        reset
+        Oops! Start Over
       </button>
     </>
   );

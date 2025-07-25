@@ -1,20 +1,44 @@
 import "./App.css";
 import "./css/styles.css";
 import LangPage from "./components/PairsPage";
+import About from "./components/About";
+import VoiceInputRecorder from "./components/admin/recorder";
+import { Routes, Route, Link } from "react-router-dom";
 
-export default function Story() {
-  return <LangPage />;
+const Home = () => <h1>Home</h1>;
+
+function App() {
+  return (
+    <div>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/about">About</Link>
+          </li>
+          <li>
+            <Link to="/learn">Learn</Link>
+          </li>
+          <li>
+            <Link to="/admin">Admin</Link>
+          </li>
+        </ul>
+      </nav>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/learn" element={<LangPage />} />
+        <Route path="/admin" element={<VoiceInputRecorder />} />
+      </Routes>
+    </div>
+  );
 }
 
-/*function Sentence() {
-  const [value, setValue] = useState(Originalvalue);
-  function handleClick() {
-    setValue("My name is Arya");
-    console.log("clicked!");
-  }
-  return (
-    <button onClick={handleClick} className="square">
-      {value}
-    </button>
-  );
+export default App;
+
+/*
+export default function Story() {
+  return <LangPage />;
 }*/
