@@ -29,8 +29,8 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     // Use the original filename or generate a new one
-    console.log("req.file", file);
-    const filename = file.originalname || `recording-${Date.now()}.wav`;
+    console.log("req.file", req.body.audioName);
+    const filename = req.body.audioName || `recording-${Date.now()}.wav`;
     cb(null, filename);
   },
 });
@@ -44,9 +44,11 @@ const upload = multer({
 
 // Upload endpoint
 app.post("/api/upload-audio", upload.single("audio"), (req, res) => {
-  console.log("request is req", req.file.originalname);
+  console.log("request audioname is  ", req.body.audioName);
+
   try {
     if (!req.file) {
+      console.log("req.file not found");
       return res.status(400).json({ error: "No audio file uploaded" });
     }
 
@@ -58,21 +60,38 @@ app.post("/api/upload-audio", upload.single("audio"), (req, res) => {
       __dirname,
       "public",
       "audio",
-      req.file.filename
+      req.body.audioName
     );
     console.log("input path", inputPath);
 
     const outputPath = inputPath.replace(".wav", ".mp3");
     console.log("output path", outputPath);
 
-    ffmpeg(inputPath).toFormat("mp3").save(outputPath);
-    
+    ffmpeg(inputPath)
+      .toFormat("mp3")
+      .save(outputPath)
+      .on("end", () => {
+        console.log("MP3 conversion completed successfully");
+        if (fs.existsSync(outputPath)) {
+          console.log("Removing Wav file");
+          fs.unlinkSync(inputPath);
+        } else {
+          console.log("Output mp3 file not found.");
+        }
 
-    res.json({
-      message: "Audio file uploaded successfully",
-      filename: outputPath,
-      path: outputPath,
-    });
+        res.json({
+          message: "Audio file uploaded successfully",
+          filename: outputPath,
+          path: outputPath,
+        });
+      })
+      .on("error", (err) => {
+        console.error("FFmpeg error", err);
+        res.status(500).json({
+          error: "Audio conversion failed",
+          details: err.message,
+        });
+      });
   } catch (error) {
     console.error("Error uploading audio:", error);
     res.status(500).json({ error: "Failed to upload audio file" });

@@ -2,22 +2,8 @@ const request = require("supertest");
 const fs = require("fs");
 const path = require("path");
 const app = require("./server"); // Import your Express app
-
-// Mock ffmpeg to avoid actual file conversion in tests
-jest.mock("fluent-ffmpeg", () => {
-  const mockFfmpeg = jest.fn(() => ({
-    toFormat: jest.fn().mockReturnThis(),
-    save: jest.fn().mockReturnThis(),
-    on: jest.fn((event, callback) => {
-      if (event === "end") {
-        // Simulate conversion completion
-        setTimeout(callback, 10);
-      }
-      return mockFfmpeg;
-    }),
-  }));
-  return mockFfmpeg;
-});
+const { assert } = require("console");
+const { fail } = require("assert");
 
 describe("POST /api/upload-audio", () => {
   const testAudioDir = path.join(__dirname, "public", "audio");
@@ -43,13 +29,22 @@ describe("POST /api/upload-audio", () => {
   });*/
 
   test("should upload audio file successfully", async () => {
-    // Create a mock audio buffer
-    const audioBuffer = Buffer.from("fake audio data");
+    const wavFilePath = path.join(__dirname, "test_data", "வேலை.wav");
+
+    console.log(wavFilePath);
+    if (!fs.existsSync(wavFilePath)) {
+      assert.fail("unable to find test file ");
+    }
 
     const response = await request(app)
       .post("/api/upload-audio")
-      .attach("audio", audioBuffer, "test-recording.wav")
-      .expect(200);
+      .field("audioName", "வேலை.wav")
+      .attach("audio", wavFilePath);
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    // match status code
+    expect(response).toHaveProperty("status", 200);
 
     expect(response.body).toHaveProperty(
       "message",
@@ -58,7 +53,7 @@ describe("POST /api/upload-audio", () => {
     expect(response.body).toHaveProperty("filename");
     expect(response.body).toHaveProperty("path");
     expect(response.body.filename).toContain(".mp3");
-  });
+  }, 20000);
 
   test("should return 400 if no file is uploaded", async () => {
     const response = await request(app).post("/api/upload-audio").expect(400);
