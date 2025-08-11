@@ -12,13 +12,6 @@ export default function Game({ pairs, langA, langB }) {
   const [langBchoices, setlangBChoices] = React.useState([]);
   const [selected, setSelected] = React.useState({});
 
-  /*
-  0. Add table
-  1. Split the table into two columns
-  2. Accent in tamil
-
-  */
-
   React.useEffect(() => {
     setTimeout(() => {
       const voices = synthRef.current
@@ -66,32 +59,111 @@ export default function Game({ pairs, langA, langB }) {
     const words = ["Nice one!", "You did it!", "Impressive"];
     const utterThis = new SpeechSynthesisUtterance(random(words));
     utterThis.rate = 1.5;
+    utterThis.volume = 1.0;
+
+    utterThis.onerror = (event) => {
+      console.warn("Correct speech error:", event.error);
+    };
+
     setTimeout(() => {
+      if (synthRef.current.speaking) {
+        synthRef.current.cancel();
+      }
       synthRef.current.speak(utterThis);
     }, 1000);
   };
 
   const incorrect = () => {
-    const words = ["Next time", "Oops", "Not quite", "Don't give up"];
+    const words = ["Oops", "Not quite", "Don't give up"];
     const utterThis = new SpeechSynthesisUtterance(random(words));
     utterThis.rate = 1.5;
+    utterThis.volume = 1.0;
+
+    utterThis.onerror = (event) => {
+      console.warn("Incorrect speech error:", event.error);
+    };
+
     setTimeout(() => {
+      if (synthRef.current.speaking) {
+        synthRef.current.cancel();
+      }
       synthRef.current.speak(utterThis);
-    }, 1000);
+    }, 1000); // Reduced from 3000ms to 1000ms
   };
 
   const speakTamil = (word) => {
-    // find the corresponding audio file for the word
-    // and play it
+    // find the corresponding audio file for the word and play it
     const audio = new Audio(`audio/${word}.mp3`);
-    audio.play();
+
+    audio.onerror = (error) => {
+      console.warn(
+        `Audio file not found or failed to load: audio/${word}.mp3`,
+        error
+      );
+      // Fallback: try to use speech synthesis for Tamil
+      const utterThis = new SpeechSynthesisUtterance(word);
+      if (langBVoice) {
+        utterThis.voice = langBVoice;
+      }
+      utterThis.lang = "ta-IN";
+      utterThis.rate = 0.8;
+      utterThis.volume = 1.0;
+
+      setTimeout(() => {
+        if (synthRef.current.speaking) {
+          synthRef.current.cancel();
+        }
+        synthRef.current.speak(utterThis);
+      }, 100);
+    };
+
+    audio.oncanplaythrough = () => {
+      audio.play().catch((error) => {
+        console.warn("Audio play failed:", error);
+      });
+    };
+
+    // Set volume and load the audio
+    audio.volume = 1.0;
+    audio.load();
   };
   const choose = (choice) => {
     if (choice.lang === langA.code) {
+      // Stop any ongoing speech before starting new one
+      synthRef.current.cancel();
+
       const utterThis = new SpeechSynthesisUtterance(choice.value);
       utterThis.voice = langAVoice;
-      synthRef.current.speak(utterThis);
+      utterThis.rate = 1.0;
+      utterThis.volume = 1.0;
+
+      // Add error handling and retry logic
+      utterThis.onerror = (event) => {
+        console.warn("Speech synthesis error:", event.error);
+        // Retry once after a short delay
+        setTimeout(() => {
+          synthRef.current.cancel();
+          synthRef.current.speak(utterThis);
+        }, 100);
+      };
+
+      utterThis.onstart = () => {
+        console.log("Started speaking:", choice.value);
+      };
+
+      utterThis.onend = () => {
+        console.log("Finished speaking:", choice.value);
+      };
+
+      // Small delay to ensure speech synthesis is ready
+      setTimeout(() => {
+        if (synthRef.current.speaking) {
+          synthRef.current.cancel();
+        }
+        synthRef.current.speak(utterThis);
+      }, 50);
     }
+
     // If langB then get audio file for word
     if (choice.lang === langB.code) {
       speakTamil(choice.value);
@@ -158,50 +230,59 @@ export default function Game({ pairs, langA, langB }) {
       </div>
 
       <h2>Choose the pairs</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>{langA.name}</th>
-            <th>{langB.name}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td key="langA">
-              {langAchoices.map((choice) => (
+      <div className="pairs-game">
+        <div className="language-section">
+          <h3 className="language-title">{langA.name}</h3>
+          <div className="choices-container">
+            {langAchoices.map((choice, index) => (
+              <div
+                key={`${choice.lang}-${choice.value}`}
+                className="choice-card"
+              >
                 <button
-                  key={`${choice.lang}-${choice.value}`}
                   onClick={() => {
                     choose(choice);
                   }}
-                  className={
+                  className={`choice-btn ${
                     current && current.value === choice.value ? "selected" : ""
-                  }
+                  } ${selected[choice.value] ? "matched" : ""}`}
                   disabled={!!selected[choice.value]}
                 >
-                  {choice.value}{" "}
+                  <div className="choice-number">
+                    {String.fromCharCode(65 + index)}
+                  </div>
+                  <div className="choice-text">{choice.value}</div>
                 </button>
-              ))}
-            </td>
-            <td key="langB">
-              {langBchoices.map((choice) => (
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="language-section">
+          <h3 className="language-title">{langB.name}</h3>
+          <div className="choices-container">
+            {langBchoices.map((choice, index) => (
+              <div
+                key={`${choice.lang}-${choice.value}`}
+                className="choice-card"
+              >
                 <button
-                  key={`${choice.lang}-${choice.value}`}
                   onClick={() => {
                     choose(choice);
                   }}
-                  className={
+                  className={`choice-btn ${
                     current && current.value === choice.value ? "selected" : ""
-                  }
+                  } ${selected[choice.value] ? "matched" : ""}`}
                   disabled={!!selected[choice.value]}
                 >
-                  {choice.value}
+                  <div className="choice-number">{index + 1}</div>
+                  <div className="choice-text">{choice.value}</div>
                 </button>
-              ))}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
       <br></br>
       <button className="reset" onClick={() => reset()}>
         Oops! Start Over

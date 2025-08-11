@@ -98,6 +98,7 @@ const VoiceInputRecorder = () => {
         // Create FormData to send to server
         const serverFormData = new FormData();
         serverFormData.append("audio", blob, filename);
+        serverFormData.append("audioName", filename);
         console.log("✅ FormData created with filename:", filename);
 
         // Send to your backend endpoint
@@ -185,7 +186,7 @@ const VoiceInputRecorder = () => {
               <label>File Name</label>
               <input
                 name="audioName"
-                placeholder="Enter filename (optional) தமிழில் பதிவு செய்யுங்கள்"
+                placeholder="தமிழில் பதிவு செய்யுங்கள்"
                 lang="ta"
               ></input>
               <button type="submit">save to server</button>

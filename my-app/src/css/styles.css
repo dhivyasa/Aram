@@ -82,3 +82,381 @@ button.selected {
 button:disabled {
   cursor: default;
 }
+
+/* Card-based pairs game layout */
+.pairs-game {
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+  margin: 2rem 0;
+}
+
+.language-section {
+  flex: 1;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.language-title {
+  text-align: center;
+  margin: 0 0 1.5rem 0;
+  color: #495057;
+  font-size: 1.25rem;
+  font-weight: 600;
+  border-bottom: 2px solid #dee2e6;
+  padding-bottom: 0.5rem;
+}
+
+.choices-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.choice-card {
+  transition: transform 0.2s ease;
+}
+
+.choice-card:hover {
+  transform: translateY(-1px);
+}
+
+.choice-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.choice-btn:hover:not(:disabled) {
+  border-color: #007bff;
+  background: #f8f9fa;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+}
+
+.choice-btn.selected {
+  border-color: #007bff;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.choice-btn.matched {
+  border-color: #28a745;
+  background: linear-gradient(135deg, #28a745, #1e7e34);
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.choice-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.choice-number {
+  background: #6c757d;
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: bold;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.choice-btn.selected .choice-number {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.choice-btn.matched .choice-number {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.choice-text {
+  flex: 1;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Batch navigation styles */
+.batch-navigation {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.batch-info {
+  margin: 1rem 0;
+  font-size: 1.1rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.batch-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+}
+
+.batch-btn {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  background: white;
+  color: #007bff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.batch-btn:hover:not(:disabled) {
+  background: #007bff;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.batch-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f8f9fa;
+  color: #6c757d;
+  border-color: #dee2e6;
+}
+
+.batch-btn.reset {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.batch-btn.reset:hover:not(:disabled) {
+  background: #28a745;
+  color: white;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+/* Progress bar styles */
+.batch-footer {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.progress-text {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+
+/* Multi-batch layout styles */
+.multi-batch-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.total-info {
+  margin-top: 0.5rem;
+  font-size: 1.1rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.all-batches-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.batch-section {
+  background: #f8f9fa;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.batch-section:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.batch-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.batch-header h2 {
+  margin: 0;
+  color: #495057;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.batch-count {
+  background: #007bff;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.batch-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #dee2e6, transparent);
+  margin: 2rem 0;
+}
+
+.summary-footer {
+  text-align: center;
+  margin-top: 3rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.summary-footer p {
+  margin: 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .pairs-game {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .language-section {
+    padding: 1rem;
+  }
+
+  .choice-btn {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .choice-number {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+
+  .batch-controls {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .batch-btn {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .batch-section {
+    padding: 1rem;
+    margin: 0 -1rem;
+    border-radius: 8px;
+  }
+
+  .batch-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .batch-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .summary-footer {
+    margin: 2rem -1rem 0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+/* Ensure each batch game has proper spacing */
+.batch-section .pairs-game {
+  margin: 0;
+}
+
+.batch-section .languages {
+  margin-bottom: 1.5rem;
+}
+
+/* Add visual distinction between batches */
+.batch-section:nth-child(odd) {
+  background: #f8f9fa;
+}
+
+.batch-section:nth-child(even) {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+}
+
+/* Scroll to batch animation */
+.batch-section {
+  scroll-margin-top: 2rem;
+}
+
+/* Add batch number styling */
+.batch-header h2::before {
+  content: "📚 ";
+  margin-right: 0.5rem;
+}
+
+/* Animation for successful matches */
+@keyframes matchSuccess {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.choice-btn.matched {
+  animation: matchSuccess 0.6s ease-out;
+}
